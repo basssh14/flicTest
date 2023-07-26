@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "901067354425",
+    "project_id": "prueba-174d5",
+    "storage_bucket": "prueba-174d5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:901067354425:android:971b8c24f22dff8ad238e8",
+        "android_client_info": {
+          "package_name": "uk.co.darkerwaters.flic_button_example"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "901067354425-7c6j79gggik85oknnjae5e3u32k14mvp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLjDzSslSHrY4gWJ5AFP15umiqoLmBqwQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "901067354425-7c6j79gggik85oknnjae5e3u32k14mvp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

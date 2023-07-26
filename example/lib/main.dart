@@ -1,23 +1,47 @@
 import 'dart:io';
 
+import 'package:flic_button_example/notification_service.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flic_button/flic_button.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter/services.dart';
 
 void main() {
+  //Last added
+  // Ensure that the Flutter binding is initialized before running the app
+  WidgetsFlutterBinding.ensureInitialized();
+  // Register the native part of the plugin
+  const platform = MethodChannel('your_channel_name');
+  platform.setMethodCallHandler((call) async {
+    if (call.method == 'showLocalNotification') {
+      print("channel method workssss!!!!!");
+      // await notificationService.showLocalNotification(
+      //   id: 0,
+      //   title: "Drink Water",
+      //   body: "Time to drink some water!",
+      //   payload: "You just took water! Huurray!",
+      // );
+    }
+  });
+  //Last added
   runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  final MethodChannel platform = MethodChannel('flic_button_channel');
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> with Flic2Listener {
+  //To delete
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   // flic2 starts and isn't scanning
   bool _isScanning = false;
-
+// Initialize the MethodChannel
+  static const platform = const MethodChannel('your_channel_name');
   // as we discover buttons, lets add them to a map of uuid/button to show
   final Map<String, Flic2Button> _buttonsFound = {};
   // the last click to show we are hearing the button click
@@ -25,13 +49,77 @@ class _MyAppState extends State<MyApp> with Flic2Listener {
 
   // the plugin manager to use while we are active
   FlicButtonPlugin? flicButtonManager;
+  var notificationService;
 
   @override
   void initState() {
+    notificationService = NotificationService();
+    listenToNotificationStream();
+    notificationService.initializePlatformNotifications();
     super.initState();
+    //New broadcast stuff
+
     // create the FLIC 2 manager and initialize it
     _startStopFlic2();
+    //Last added
+    // Listen to the MethodChannel messages
+    platform.setMethodCallHandler((call) async {
+      print("methoddddddddddddd");
+      print(call.method);
+      if (call.method == 'showLocalNotification') {
+        // Handle the restartApp message and send the notification
+        // Send notification
+        await notificationService.showLocalNotification(
+          id: 0,
+          title: "Drink Water",
+          body: "Time to drink some water!",
+          payload: "You just took water! Huurray!",
+        );
+      }
+    });
+    //Last added
   }
+
+  void setupReceiver() {
+    // Set up the BroadcastReceiver to listen for the wake-up event
+    // MethodChannel('darkerwaters.flic_button.WAKE_UP_APP')
+    //     .setMethodCallHandler((call) async {
+    //   print("darkerwaters.flic_button.WAKE_UP_APP");
+    //   print(call.method);
+    //   if (call.method == 'onWakeUpApp') {
+    //     // Handle the restartApp message and send the notification
+    //     // Send notification
+    //     await notificationService.showLocalNotification(
+    //       id: 0,
+    //       title: "Drink Water",
+    //       body: "Time to drink some water!",
+    //       payload: "You just took water! Huurray!",
+    //     );
+    //   }
+    // });
+    // Set up the BroadcastReceiver to listen for the wake-up event
+    // MethodChannel('Foreground Service Channel')
+    //     .setMethodCallHandler((call) async {
+    //   print("Foreground Service Channer");
+    //   print(call.method);
+    //   if (call.method == 'onWakeUpApp') {
+    //     // Handle the restartApp message and send the notification
+    //     // Send notification
+    //     await notificationService.showLocalNotification(
+    //       id: 0,
+    //       title: "Drink Water",
+    //       body: "Time to drink some water!",
+    //       payload: "You just took water! Huurray!",
+    //     );
+    //   }
+    // });
+  }
+
+  void listenToNotificationStream() =>
+      notificationService.behaviorSubject.listen((payload) {
+        print("paylod");
+        print(payload);
+      });
 
   void _startStopScanningForFlic2() async {
     // start scanning for new buttons
@@ -108,6 +196,18 @@ class _MyAppState extends State<MyApp> with Flic2Listener {
       }
     });
   }
+
+  //New stuff
+  //Last added
+  void showLocalNotification(BuildContext context) async {
+    print("Gets in the showLocalNotification inside main.dart");
+    try {
+      await platform.invokeMethod('showLocalNotification', null);
+    } on PlatformException catch (e) {
+      print("Failed to invoke method: ${e.message}");
+    }
+  }
+  //Last added
 
   @override
   Widget build(BuildContext context) {
@@ -220,12 +320,18 @@ class _MyAppState extends State<MyApp> with Flic2Listener {
   }
 
   @override
-  void onButtonClicked(Flic2ButtonClick buttonClick) {
+  void onButtonClicked(Flic2ButtonClick buttonClick) async {
     // callback from the plugin that someone just clicked a button
     print('button ${buttonClick.button.uuid} clicked');
-    setState(() {
-      _lastClick = buttonClick;
-    });
+    // Send notification
+    // await notificationService.showLocalNotification(
+    //     id: 0,
+    //     title: "Drink Water",
+    //     body: "Time to drink some water!",
+    //     payload: "You just took water! Huurray!");
+    // setState(() {
+    //   _lastClick = buttonClick;
+    // });
   }
 
   @override
