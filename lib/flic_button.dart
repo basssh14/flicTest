@@ -114,7 +114,9 @@ abstract class Flic2Listener {
   void onButtonClicked(Flic2ButtonClick buttonClick);
 
   /// called by the plugin as a button becomes connected
-  void onButtonConnected() {}
+  void onButtonConnected() {
+    print("Button is connected!!!!");
+  }
 
   /// called by the plugin as a scan is started
   void onScanStarted() {}
@@ -124,6 +126,8 @@ abstract class Flic2Listener {
 
   /// called by the plugin as an unexpected error is encountered
   void onFlic2Error(String error) {}
+
+  void onPairedButtonFound(Flic2Button button) {}
 }
 
 /// the plugin to handle Flic2 buttons
@@ -176,7 +180,7 @@ class FlicButtonPlugin {
   Future<bool?>? _invokationFuture;
 
   final Flic2Listener flic2listener;
-  
+
   final log = Logger('FlicButtonPlugin');
 
   FlicButtonPlugin({required this.flic2listener}) {
@@ -200,7 +204,16 @@ class FlicButtonPlugin {
 
   /// initiate a scan for buttons
   Future<bool?> scanForFlic2() async {
+    print("Flic_button.dart scanForFlic2()");
     // scan for flic 2 buttons then please
+    return _channel.invokeMethod<bool>(_methodNameStartFlic2Scan);
+  }
+
+  /// initiate a scan for buttons
+  Future<bool?> checkNewConnection() async {
+    print("Flic_button.dart scanForFlic2()");
+    // scan for flic 2 buttons then please
+    // _channel.invokeMethod<bool>(_methodName);
     return _channel.invokeMethod<bool>(_methodNameStartFlic2Scan);
   }
 
@@ -212,6 +225,7 @@ class FlicButtonPlugin {
 
   /// connect a button for use
   Future<bool?> connectButton(String buttonUuid) async {
+    print("Flic_button.dart connectButton()");
     // connect this button then please
     return _channel.invokeMethod<bool>(_methodNameConnectButton, [buttonUuid]);
   }
@@ -398,6 +412,7 @@ class FlicButtonPlugin {
             break;
           case METHOD_FLIC2_SCAN_COMPLETE:
             // process this method - scanning for buttons completed
+            flic2listener.onPairedButtonFound(_createFlic2FromData(methodData));
             flic2listener.onScanCompleted();
             break;
           case METHOD_FLIC2_ERROR:

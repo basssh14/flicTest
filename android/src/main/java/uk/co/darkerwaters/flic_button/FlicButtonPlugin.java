@@ -1,5 +1,10 @@
 package uk.co.darkerwaters.flic_button;
 
+
+import android.content.Intent;
+import android.os.Build;
+import androidx.core.content.ContextCompat;
+
 import android.content.Context;
 import android.widget.Button;
 
@@ -11,14 +16,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
+import android.util.Log;
 
 import io.flic.flic2libandroid.BatteryLevel;
 import io.flic.flic2libandroid.Flic2Button;
+import io.flic.flic2libandroid.Flic2ButtonListener;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
+
+//This delete
 
 /** FlicButtonPlugin */
 public class FlicButtonPlugin implements FlutterPlugin, MethodCallHandler {
@@ -66,6 +75,9 @@ public class FlicButtonPlugin implements FlutterPlugin, MethodCallHandler {
 
   private Context context = null;
 
+  private Context appContext;
+
+
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     this.channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), channelName);
@@ -73,6 +85,15 @@ public class FlicButtonPlugin implements FlutterPlugin, MethodCallHandler {
     // we will need the application context later for when they start the service or
     // whatever
     this.context = flutterPluginBinding.getApplicationContext();
+    this.appContext = flutterPluginBinding.getApplicationContext();
+    // Start the Flic2Service as a foreground service
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      Intent serviceIntent = new Intent(this.context, Flic2Service.class);
+      ContextCompat.startForegroundService(this.context, serviceIntent);
+    }
+
+
+
   }
 
   @Override
@@ -80,10 +101,18 @@ public class FlicButtonPlugin implements FlutterPlugin, MethodCallHandler {
     channel.setMethodCallHandler(null);
     // and shutdown anything else started
     if (null != this.flic2Controller) {
+
       this.flic2Controller.releaseFlic();
       this.flic2Controller = null;
     }
+    // Stop the Flic2Service
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      Intent serviceIntent = new Intent(this.context, Flic2Service.class);
+      this.context.stopService(serviceIntent);
+    }
+
   }
+
 
   private String extractStringArgument(String functionName, String paramName, Object arguments,
       @NonNull final Result result) {
@@ -211,6 +240,9 @@ public class FlicButtonPlugin implements FlutterPlugin, MethodCallHandler {
       } else {
         // start Flic 2 then
         this.flic2Controller = new Flic2Controller(context, flic2Callback);
+        if(null == this.flic2Controller) {
+          result.error(ERROR_NOT_STARTED, "fjasljdfkajsdkfjklasdjkfajdsf", "alsdkfjalsdjfklasdfjlkasjdlfk");
+        }
         result.success(true);
       }
     } else if (call.method.equals(methodNameDispose)) {
@@ -334,6 +366,7 @@ public class FlicButtonPlugin implements FlutterPlugin, MethodCallHandler {
   private final Flic2Controller.ButtonCallback flic2Callback = new Flic2Controller.ButtonCallback() {
     @Override
     public void onPairedButtonFound(Flic2Button button) {
+      Log.d("MethodChannel", "New Paired BUTTONNNNNNNNN!!!!!!");
       // inform listeners of this class of this function
       informListeners(METHOD_FLIC2_DISCOVER_PAIRED, ButtonToJson(button));
     }
@@ -345,6 +378,13 @@ public class FlicButtonPlugin implements FlutterPlugin, MethodCallHandler {
 
     @Override
     public void onButtonConnected() {
+      Log.d("MethodChannel", "ButtonConnected FlicButtonPlugin2323223!!!!");
+      Flic2Service flic2Service = Flic2Service.getInstance();
+      if (flic2Service != null) {
+        flic2Service.listenForButtonHold();
+      } else {
+        Log.e("MethodChannel", "Flic2Service instance is null");
+      }
       informListeners(METHOD_FLIC2_CONNECTED, null);
     }
 
@@ -371,6 +411,7 @@ public class FlicButtonPlugin implements FlutterPlugin, MethodCallHandler {
     @Override
     public void onButtonClicked(Flic2Button button, boolean wasQueued, boolean lastQueued, long timestamp,
         boolean isSingleClick, boolean isDoubleClick, boolean isHold) {
+      Log.d("MethodChannel", "flicButtonPlugin onButtonClicked()");
       // convert all this complex and bulky data to a single object to pass back
       final String jsonData = "{" + "\"wasQueued\":" + wasQueued + "," + "\"clickAge\":"
           + (wasQueued ? button.getReadyTimestamp() - timestamp : 0) + "," + "\"lastQueued\":" + lastQueued + ","

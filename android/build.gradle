@@ -9,7 +9,9 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:4.1.3'
+        classpath 'com.google.gms:google-services:4.3.10'
     }
+
 }
 
 rootProject.allprojects {
@@ -35,4 +37,5 @@ android {
 
 dependencies {
     implementation 'io.flic:flic2lib-android:1.1.0'
+    implementation 'com.google.firebase:firebase-messaging:23.0.0'
 }
