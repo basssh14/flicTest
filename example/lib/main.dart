@@ -6,13 +6,15 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flic_button/flic_button.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/scheduler.dart';
 
-void main() {
+void main() async {
   //Last added
   // Ensure that the Flutter binding is initialized before running the app
   WidgetsFlutterBinding.ensureInitialized();
   // Register the native part of the plugin
   const platform = MethodChannel('your_channel_name');
+
   platform.setMethodCallHandler((call) async {
     if (call.method == 'showLocalNotification') {
       print("channel method workssss!!!!!");
@@ -24,7 +26,7 @@ void main() {
       // );
     }
   });
-  //Last added
+
   runApp(MyApp());
 }
 
@@ -57,8 +59,11 @@ class _MyAppState extends State<MyApp> with Flic2Listener {
     listenToNotificationStream();
     notificationService.initializePlatformNotifications();
     super.initState();
-    //New broadcast stuff
-
+    //Execute the getButtons function when component is loaded
+    // Schedule a callback after the widget is fully built
+    SchedulerBinding.instance!.addPostFrameCallback((_) {
+      _getButtons();
+    });
     // create the FLIC 2 manager and initialize it
     _startStopFlic2();
     //Last added

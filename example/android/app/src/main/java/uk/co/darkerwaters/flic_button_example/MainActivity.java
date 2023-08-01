@@ -19,13 +19,19 @@ import uk.co.darkerwaters.flic_button.Flic2Service; // Import the correct Flic2S
 import android.util.Log;
 import android.os.Build;
 import java.util.List;
+//new stuff 28
+import android.Manifest;
+import android.app.Activity;
+import android.content.pm.PackageManager;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 
 public class MainActivity extends FlutterActivity {
     public static final String ACTION_RESTART_APP = "ACTION_RESTART_APP";
     private static final String CHANNEL = "flic_button_channel";
     private static final String METHOD_CHANNEL_NAME = "flic_button_channel";
-
+    private static final int REQUEST_FINE_LOCATION_PERMISSION = 1;
     private MethodChannel methodChannel;
     //To delete
     @Override
@@ -37,6 +43,8 @@ public class MainActivity extends FlutterActivity {
         if (!isServiceRunning(ForegroundService.class)) {
             startForegroundService(new Intent(this, ForegroundService.class));
         }
+
+
 //        startForegroundService();
         // Set up a MethodChannel to receive messages from Flutter
 //        methodChannel = new MethodChannel(getFlutterEngine().getDartExecutor().getBinaryMessenger(), CHANNEL);
