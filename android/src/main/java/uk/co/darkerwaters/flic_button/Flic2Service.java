@@ -75,7 +75,7 @@ public class Flic2Service extends Service {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
                     "Flic2 Service Channel",
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationManager.IMPORTANCE_LOW
             );
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);

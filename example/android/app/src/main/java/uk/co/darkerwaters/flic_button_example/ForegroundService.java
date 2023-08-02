@@ -36,23 +36,7 @@ public class ForegroundService extends Service {
 
 
 
-//    private boolean isAppRunningInForeground() {
-//        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-//        List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(1);
-//        if (!tasks.isEmpty()) {
-//            String topActivity = tasks.get(0).topActivity.getPackageName();
-//            return topActivity.equals("YOUR_FLUTTER_APP_PACKAGE_NAME");
-//        }
-//        return false;
-//    }
-//
-//    private void openFlutterApp() {
-//        // Launch the FlutterMainActivity
-//        Intent intent = new Intent();
-//        intent.setClassName("YOUR_FLUTTER_APP_PACKAGE_NAME", "YOUR_FLUTTER_APP_PACKAGE_NAME.FlutterMainActivity");
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        startActivity(intent);
-//    }
+
     private void sendNotificationToFlutter() {
         // You can use the broadcast method here to send a notification to the Flutter app
         // For example:
@@ -106,7 +90,7 @@ public class ForegroundService extends Service {
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
                     "Foreground Service Channel",
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationManager.IMPORTANCE_LOW
             );
 
             NotificationManager manager = getSystemService(NotificationManager.class);

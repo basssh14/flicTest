@@ -175,6 +175,10 @@ class _MyAppState extends State<MyApp> with Flic2Listener {
     setState(() {
       // add the button to the map
       _buttonsFound[button.uuid] = button;
+      print("buttons Found 22222");
+      print(_buttonsFound);
+      print(_buttonsFound.toString());
+      print(_buttonsFound[button.uuid]?.serialNo);
       // and listen to the button for clicks and things
       flicButtonManager!.listenToFlic2Button(button.uuid);
     });
@@ -184,6 +188,10 @@ class _MyAppState extends State<MyApp> with Flic2Listener {
     // if disconnected, connect, else disconnect the button
     if (button.connectionState == Flic2ButtonConnectionState.disconnected) {
       flicButtonManager!.connectButton(button.uuid);
+      print("buttons Found 333333333");
+      print(_buttonsFound);
+      print(_buttonsFound.toString());
+      print(_buttonsFound[button.uuid]?.serialNo);
     } else {
       flicButtonManager!.disconnectButton(button.uuid);
     }
@@ -342,6 +350,10 @@ class _MyAppState extends State<MyApp> with Flic2Listener {
   @override
   void onButtonConnected() {
     super.onButtonConnected();
+    print("buttonConnected 223232323233232323");
+    print("buttonsFound 23332323232323");
+    print(_buttonsFound.toString());
+
     // this changes the state of our list of buttons, set state for this
     setState(() {
       print('button connected');
