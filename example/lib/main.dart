@@ -1,29 +1,22 @@
-import 'dart:io';
-import 'package:flic_button_example/Copy.dart';
+import 'package:flic_button_example/copy.dart';
 import 'package:flic_button_example/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flic_button/flic_button.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'Test.dart';
+import 'flic_provider.dart';
 
 void main() async {
-  //Last added
   // Ensure that the Flutter binding is initialized before running the app
   WidgetsFlutterBinding.ensureInitialized();
-  // Register the native part of the plugin
+  // Note: Dont remove this, this prevents a notification sended when app starts
   const platform = MethodChannel('your_channel_name');
-
   platform.setMethodCallHandler((call) async {
     if (call.method == 'showLocalNotification') {
+      //This shouldn't do anything, it just prevents the other method channel
+      // to be executed when the app starts....
       print("channel method workssss!!!!!");
-      // await notificationService.showLocalNotification(
-      //   id: 0,
-      //   title: "Drink Water",
-      //   body: "Time to drink some water!",
-      //   payload: "You just took water! Huurray!",
-      // );
     }
   });
 
@@ -32,7 +25,6 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  final MethodChannel platform = MethodChannel('flic_button_channel');
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -45,7 +37,6 @@ class _MyAppState extends State<MyApp> {
 }
 
 class FlicButtonPage extends StatefulWidget {
-  //final MethodChannel platform = MethodChannel('flic_button_channel');
   @override
   _FlicButtonPageState createState() => _FlicButtonPageState();
 }
@@ -72,7 +63,6 @@ class _FlicButtonPageState extends State<FlicButtonPage> {
     // create the FLIC 2 manager and initialize it
     initializeProvider();
     notificationService = NotificationService();
-    listenToNotificationStream();
     notificationService.initializePlatformNotifications();
     super.initState();
     // Listen to the MethodChannel messages
@@ -92,24 +82,6 @@ class _FlicButtonPageState extends State<FlicButtonPage> {
     });
     //Last added
   }
-
-  void listenToNotificationStream() =>
-      notificationService.behaviorSubject.listen((payload) {
-        print("paylod");
-        print(payload);
-      });
-
-  //New stuff
-  //Last added
-  void showLocalNotification(BuildContext context) async {
-    print("Gets in the showLocalNotification inside main.dart");
-    try {
-      await platform.invokeMethod('showLocalNotification', null);
-    } on PlatformException catch (e) {
-      print("Failed to invoke method: ${e.message}");
-    }
-  }
-  //Last added
 
   @override
   Widget build(BuildContext context) {

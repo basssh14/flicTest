@@ -39,26 +39,16 @@ public class Flic2Service extends Service {
     private static final String CHANNEL_ID = "flic_service_channel";
     private static final String CHANNEL_NAME = "flic_button_channel";
     private MethodChannel methodChannel;
-    private static final int REQUEST_FINE_LOCATION_PERMISSION = 1;
-    private boolean isScanningPending = false;
 
     @Override
     public void onCreate() {
         Log.d("MethodChannel", "flic2Service onCreate()");
         super.onCreate();
-        //NEw stuff 28
         instance = this;
-        //Delete this
         methodChannel = new MethodChannel(
                 FlutterEngineCache.getInstance().get("flutter_engine").getDartExecutor().getBinaryMessenger(),
                 CHANNEL_NAME
         );
-
-
-
-        // Print the buttons to the console
-//        Log.d("MethodChannel", "getButtons");
-//        Log.d("MethodChannel", String.valueOf(buttons));
     }
 
     @Override
@@ -69,7 +59,6 @@ public class Flic2Service extends Service {
 
 
     private Notification createNotification() {
-        Log.d("MethodChannel", "flic2Service createNotification()");
         // Create a notification channel for Android 8.0 and above
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
@@ -101,8 +90,8 @@ public class Flic2Service extends Service {
     }
 
     public void listenForButtonHold(){
-        Log.d("MethodChannel", "Flic2Service, listenForButtonHold()asdfafd####");
         // Define the delay time in milliseconds (2 seconds = 2000 milliseconds)
+
         final int delayTimeMillis = 2000;
 
         // Create a new Handler to execute the delayed task
@@ -112,8 +101,6 @@ public class Flic2Service extends Service {
         Runnable delayedTask = new Runnable() {
             @Override
             public void run() {
-                // This code will be executed after the specified delay
-                Log.d("MethodChannel", "Flic2Service, executeHandler 454545!!!!!");
                 // Init flic stuff
                 Flic2Manager.initAndGetInstance(getApplicationContext(), new Handler());
                 Flic2Manager manager = Flic2Manager.getInstance();
@@ -125,46 +112,22 @@ public class Flic2Service extends Service {
                     button1.addListener(new Flic2ButtonListener() {
                         public void onButtonClickOrHold(Flic2Button button, boolean wasQueued, boolean lastQueued, long timestamp, boolean isClick, boolean isHold) {
                             if (isHold) {
-                                Log.d("MethodChannel", "holddddddddddd");
                                 // Broadcast an event to wake up the MainActivity
+                                //Note: This part will send a broadcast to the file ForegroundService inside the example
+                                //That file will be listening for "uk.co.darkerwater.flic_button.WAKE_UP_APP"
                                 Intent broadcastIntent = new Intent("uk.co.darkerwaters.flic_button.WAKE_UP_APP");
                                 sendBroadcast(broadcastIntent);
                             }
                         }
                     });
                     // Print the buttons to the console
-                    Log.d("MethodChannel", "getButtons");
-                    Log.d("MethodChannel", String.valueOf(buttons));
-                    Log.d("MethodChannel", "getButton");
-                    Log.d("MethodChannel", String.valueOf(button1));
+//                    Log.d("MethodChannel", "getButtons");
+//                    Log.d("MethodChannel", String.valueOf(buttons));
                 }
             }
         };
-        //Init flic stuff
-//        Flic2Manager.initAndGetInstance(getApplicationContext(), new Handler());
-//        Flic2Manager manager = Flic2Manager.getInstance();
-//        // Get the buttons
-//        List<Flic2Button> buttons = manager.getButtons();
-//        if(!buttons.isEmpty()){
-//            Flic2Button button1 = manager.getButtonByBdAddr(String.valueOf(buttons.get(0)));
-//            button1.addListener(new Flic2ButtonListener() {
-//
-//                public void onButtonClickOrHold(Flic2Button button, boolean wasQueued, boolean lastQueued, long timestamp, boolean isClick, boolean isHold){
-//                    if(isHold){
-//                        Log.d("MethodChannel", "holddddddddddd");
-//                        // Broadcast an event to wake up the MainActivity
-//                        Intent broadcastIntent = new Intent("uk.co.darkerwaters.flic_button.WAKE_UP_APP");
-//                        sendBroadcast(broadcastIntent);
-//                    }
-//                }
-//            });
-//            // Print the buttons to the console
-//            Log.d("MethodChannel", "getButtons");
-//            Log.d("MethodChannel", String.valueOf(buttons));
-//            Log.d("MethodChannel", "getButton");
-//            Log.d("MethodChannel", String.valueOf(button1));
-//        }
-        // Post the delayed task with the specified delay time
+        //Note: Important! We need some delay before the listener because we need to make sure the buttons is
+        //connected
         handler.postDelayed(delayedTask, delayTimeMillis);
     }
     public static Flic2Service getInstance() {

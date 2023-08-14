@@ -34,16 +34,6 @@ public class ForegroundService extends Service {
         }
     };
 
-
-
-
-    private void sendNotificationToFlutter() {
-        // You can use the broadcast method here to send a notification to the Flutter app
-        // For example:
-        Intent intent = new Intent("uk.co.darkerwaters.flic_button.WAKE_UP_APP");
-        sendBroadcast(intent);
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -98,6 +88,7 @@ public class ForegroundService extends Service {
         }
     }
     private void onWakeUpApp() {
+        //Note: This function will send a channel broadcast to flutter with the method "showLocalNotification"
         Log.d("MethodChannel", "FS22 onWakeUpApp()");
         MethodChannel channel = new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), CHANNEL_NAME);
         channel.invokeMethod("showLocalNotification", null);

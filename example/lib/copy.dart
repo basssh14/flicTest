@@ -2,7 +2,7 @@ import 'package:flic_button/flic_button.dart';
 import 'package:flic_button_example/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'Test.dart';
+import 'flic_provider.dart';
 
 class Copy extends StatefulWidget {
   // final CounterProvider counterProvider;
@@ -12,20 +12,6 @@ class Copy extends StatefulWidget {
 }
 
 class _CopyState extends State<Copy> {
-  // Initialize the FlicButtonManagerSingleton
-  // var counterProvider;
-  // var flicButtonManager;
-  // void initializeProvider() {
-  //   counterProvider = Provider.of<CounterProvider>(context, listen: false);
-  //   flicButtonManager = counterProvider.flicButtonManager;
-  // }
-  //
-  // @override
-  // void initState() {
-  //   initializeProvider();
-  //   super.initState();
-  // }
-
   //Last added
   @override
   Widget build(BuildContext context) {
