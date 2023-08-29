@@ -108,18 +108,31 @@ public class Flic2Service extends Service {
                 // Get the buttons
                 List<Flic2Button> buttons = manager.getButtons();
                 if (!buttons.isEmpty()) {
-                    Flic2Button button1 = manager.getButtonByBdAddr(String.valueOf(buttons.get(0)));
-                    button1.addListener(new Flic2ButtonListener() {
-                        public void onButtonClickOrHold(Flic2Button button, boolean wasQueued, boolean lastQueued, long timestamp, boolean isClick, boolean isHold) {
-                            if (isHold) {
-                                // Broadcast an event to wake up the MainActivity
-                                //Note: This part will send a broadcast to the file ForegroundService inside the example
-                                //That file will be listening for "uk.co.darkerwater.flic_button.WAKE_UP_APP"
-                                Intent broadcastIntent = new Intent("uk.co.darkerwaters.flic_button.WAKE_UP_APP");
-                                sendBroadcast(broadcastIntent);
+                    for(Flic2Button button : buttons){
+                        button.addListener(new Flic2ButtonListener() {
+                            public void onButtonClickOrHold(Flic2Button button, boolean wasQueued, boolean lastQueued, long timestamp, boolean isClick, boolean isHold) {
+                                if (isHold) {
+                                    // Broadcast an event to wake up the MainActivity
+                                    //Note: This part will send a broadcast to the file ForegroundService inside the example
+                                    //That file will be listening for "uk.co.darkerwater.flic_button.WAKE_UP_APP"
+                                    Intent broadcastIntent = new Intent("uk.co.darkerwaters.flic_button.WAKE_UP_APP");
+                                    sendBroadcast(broadcastIntent);
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
+//                    Flic2Button button1 = manager.getButtonByBdAddr(String.valueOf(buttons.get(0)));
+//                    button1.addListener(new Flic2ButtonListener() {
+//                        public void onButtonClickOrHold(Flic2Button button, boolean wasQueued, boolean lastQueued, long timestamp, boolean isClick, boolean isHold) {
+//                            if (isHold) {
+//                                // Broadcast an event to wake up the MainActivity
+//                                //Note: This part will send a broadcast to the file ForegroundService inside the example
+//                                //That file will be listening for "uk.co.darkerwater.flic_button.WAKE_UP_APP"
+//                                Intent broadcastIntent = new Intent("uk.co.darkerwaters.flic_button.WAKE_UP_APP");
+//                                sendBroadcast(broadcastIntent);
+//                            }
+//                        }
+//                    });
                     // Print the buttons to the console
 //                    Log.d("MethodChannel", "getButtons");
 //                    Log.d("MethodChannel", String.valueOf(buttons));
